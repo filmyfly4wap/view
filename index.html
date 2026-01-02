@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#000;
+  overflow:hidden;
+}
+
+/* LOADING SCREEN */
+#loading-screen{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(135deg,#000814,#001d3d,#003566);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+  transition:.6s ease;
+}
+
+/* LOGO */
+.loading-logo{
+  width:120px;
+  height:120px;
+  border-radius:22px;
+  margin-bottom:20px;
+  animation:float 3s ease-in-out infinite;
+  box-shadow:0 10px 30px rgba(59,130,246,.4);
+}
+
+/* TEXT */
+.loading-text{
+  font-size:22px;
+  font-weight:700;
+  background:linear-gradient(90deg,#fff,#3b82f6,#fff);
+  background-size:200%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shimmer 2s linear infinite;
+  margin-bottom:10px;
+  text-align:center;
+}
+
+/* MATCH INFO */
+.loading-subtext{
+  font-size:14px;
+  color:#94a3b8;
+  margin-bottom:20px;
+  text-align:center;
+}
+
+/* PROGRESS BAR */
+.loading-progress{
+  width:300px;
+  height:5px;
+  background:#1e293b;
+  border-radius:10px;
+  overflow:hidden;
+}
+.loading-progress-bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#60a5fa,#2563eb);
+  transition:.3s;
+}
+
+/* PERCENT */
+.loading-percent{
+  margin-top:10px;
+  font-size:15px;
+  font-weight:600;
+  color:#93c5fd;
+}
+
+/* FADE */
+.fade-out{
+  opacity:0;
+  visibility:hidden;
+}
+
+/* ANIMATION */
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-12px)}
+}
+@keyframes shimmer{
+  0%{background-position:0%}
+  100%{background-position:200%}
+}
+
+/* MOBILE */
+@media(max-width:600px){
+  .loading-logo{width:90px;height:90px}
+  .loading-text{font-size:18px}
+  .loading-progress{width:250px}
+}
+</style>
+</head>
+
+<body>
+
+<div id="loading-screen">
+  <img src="https://i.postimg.cc/K8sJqTtD/filmyfly4wap.png"
+       class="loading-logo">
+  <div class="loading-text">Loading Live Matches...</div>
+  <div class="loading-subtext">Live: IND vs AUS • Starting Soon</div>
+
+  <div class="loading-progress">
+    <div class="loading-progress-bar"></div>
+  </div>
+  <div class="loading-percent">0%</div>
+</div>
+
+<script>
+const loadingScreen=document.getElementById("loading-screen");
+const progressBar=document.querySelector(".loading-progress-bar");
+const percentText=document.querySelector(".loading-percent");
+const textEl=document.querySelector(".loading-text");
+const subText=document.querySelector(".loading-subtext");
+
+/* ONE TIME LOAD */
+if(sessionStorage.getItem("loaded")){
+  loadingScreen.style.display="none";
+}else{
+  sessionStorage.setItem("loaded","true");
+}
+
+/* INTERNET CHECK */
+if(!navigator.onLine){
+  textEl.textContent="No Internet Connection";
+  subText.textContent="Please check your network";
+}
+
+/* AUTO TEXT */
+const texts=[
+ "Connecting to Server...",
+ "Fetching Live Match Data...",
+ "Optimizing Stream Quality...",
+ "Almost Ready..."
+];
+let textIndex=0;
+setInterval(()=>{
+  textEl.textContent=texts[textIndex];
+  textIndex=(textIndex+1)%texts.length;
+},900);
+
+/* PROGRESS */
+let progress=0;
+const loader=setInterval(()=>{
+  progress+=5;
+  progressBar.style.width=progress+"%";
+  percentText.textContent=progress+"%";
+
+  if(progress>=100){
+    clearInterval(loader);
+    setTimeout(()=>{
+      loadingScreen.classList.add("fade-out");
+      setTimeout(()=>{
+        loadingScreen.style.display="none";
+      },600);
+    },400);
+  }
+},120);
+</script>
+
+</body>
+</html>
